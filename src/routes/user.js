@@ -6,7 +6,9 @@ router.post("/users", async (req, res) => {
   try {
     const newUser = await new User(req.body);
     await newUser.save();
-    res.status(200).send(newUser);
+    const token = await newUser.generateAuthToken();
+    const data = [newUser, token];
+    res.status(200).send(data);
   } catch (err) {
     res.status(500).send(err);
   }
