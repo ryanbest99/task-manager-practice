@@ -6,7 +6,9 @@ router.post("/users", async (req, res) => {
   try {
     const newUser = await new User(req.body);
     await newUser.save();
-    res.status(200).send(newUser);
+    const token = await newUser.generateAuthToken();
+    const data = [newUser, token];
+    res.status(200).send(data);
   } catch (err) {
     res.status(500).send(err);
   }
@@ -20,7 +22,10 @@ router.post("/users/login", async (req, res) => {
       req.body.password
     );
 
-    res.send(user);
+    const token = await user.generateAuthToken();
+    const data = [user, token];
+
+    res.send(data);
   } catch (err) {
     console.log(err);
     res.status(400).send();
